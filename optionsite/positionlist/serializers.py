@@ -3,12 +3,22 @@ from .models import Option
 
 
 class OptionSerializer(serializers.Serializer):
-    id = serializers.IntegerField()
     symbol = serializers.CharField()
     strike = serializers.FloatField()
     type = serializers.CharField()
 
     class Meta:
         model = Option
-        fields = ["id", "symbol", "strike", "type"]
+        fields = ["symbol", "strike", "type"]
 
+    def create(self):
+        '''
+        creates a option object with necessary fields
+        '''
+        option = Option(
+            symbol=self.validated_data['symbol'],
+            strike=self.validated_data['strike'],
+            type=self.validated_data['type'],
+        )
+        option.save()
+        return option

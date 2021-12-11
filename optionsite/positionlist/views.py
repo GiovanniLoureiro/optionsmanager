@@ -15,3 +15,24 @@ def list_all_positions(request):
     positions = Option.objects.all()
     serializer = OptionSerializer(positions, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+@api_view(["POST"])
+def add_position(request):
+    '''
+    :param request: HTTP request with 'position' fields
+    :return: details of position
+    '''
+
+    data = {
+        'symbol': request.data.get('symbol'),
+        'strike': request.data.get('strike'),
+        'type': request.data.get('type'),
+    }
+
+    position_serializer = OptionSerializer(data=data)
+    if position_serializer.is_valid():
+        position_serializer.create()
+        return Response(position_serializer.data, status=status.HTTP_201_CREATED)
+
+    return Response(position_serializer.errors,
+                    status=status.HTTP_400_BAD_REQUEST)
